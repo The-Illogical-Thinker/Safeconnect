@@ -313,29 +313,29 @@ export default function ChatRoom() {
         ⚠️ Remember: Never share personal information, passwords, or social media handles with strangers.
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col lg:flex-row flex-1 overflow-hidden">
         {/* Main Video/Content Area */}
-        <main className="flex-1 flex flex-col min-w-0">
-          <div className="flex-1 p-5 relative overflow-hidden bg-bg flex flex-col gap-4">
+        <main className="flex-1 flex flex-col min-w-0 lg:min-h-0">
+          <div className="flex-1 p-3 md:p-5 relative overflow-hidden bg-bg flex flex-col gap-4">
             <div className={cn(
-               "flex-1 grid gap-4 overflow-hidden",
-               chatMode === 'video' ? "grid-rows-2" : "grid-cols-1"
+               "flex-1 overflow-hidden relative",
+               chatMode === 'video' ? "bg-black rounded-xl border border-border group" : ""
             )}>
               <AnimatePresence>
                 {chatMode === 'video' ? (
                   <>
                     {/* Remote Video Container */}
-                    <div className="relative rounded-xl overflow-hidden bg-black border border-border group">
+                    <div className="absolute inset-0 z-0 bg-bg">
                       <video 
                         ref={remoteVideoRef} 
                         autoPlay 
                         playsInline 
                         className={cn(
-                          "w-full h-full object-cover transition-all duration-1000",
+                          "w-full h-full object-contain md:object-cover transition-all duration-1000",
                           isBlurred && "blur-[60px] scale-110 opacity-60"
                         )}
                       />
-                      <span className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur-md rounded-md text-[12px] font-semibold border border-white/5">Stranger</span>
+                      <span className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur-md rounded-md text-[12px] font-semibold border border-white/5 text-white">Stranger</span>
                       
                       {!remoteStream && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center text-text-secondary gap-3 bg-surface/20">
@@ -347,13 +347,13 @@ export default function ChatRoom() {
                       )}
 
                       {isBlurred && remoteStream && (
-                        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/20 backdrop-blur-3xl">
-                           <div className="max-w-xs w-full bg-surface p-8 rounded-2xl border border-border text-center transform scale-100 shadow-2xl">
-                              <div className="w-14 h-14 bg-surface-bright rounded-full flex items-center justify-center mx-auto mb-4">
-                                <Shield className="w-6 h-6 text-accent" />
+                        <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/40 backdrop-blur-md">
+                           <div className="max-w-xs w-[90%] bg-surface p-6 md:p-8 rounded-2xl border border-border text-center transform scale-100 shadow-2xl">
+                              <div className="w-12 h-12 md:w-14 md:h-14 bg-surface-bright rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Shield className="w-5 h-5 md:w-6 md:h-6 text-accent" />
                               </div>
-                              <h3 className="text-xl font-bold mb-2">Privacy Shield</h3>
-                              <p className="text-[13px] text-text-secondary mb-6 leading-relaxed">Video is blurred by default. Both users must consent to unblur for a safe experience.</p>
+                              <h3 className="text-lg md:text-xl font-bold mb-2">Privacy Shield</h3>
+                              <p className="text-[12px] md:text-[13px] text-text-secondary mb-6 leading-relaxed">Video is blurred by default. Both users must consent to unblur for a safe experience.</p>
                               <button 
                                 onClick={() => setIsBlurred(false)}
                                 className="w-full py-3 rounded-xl bg-accent text-white font-bold text-sm hover:bg-accent-hover transition-all active:scale-95 flex items-center justify-center gap-2"
@@ -366,8 +366,8 @@ export default function ChatRoom() {
                       )}
                     </div>
 
-                    {/* Local Video Container */}
-                    <div className="relative rounded-xl overflow-hidden bg-black border border-border group">
+                    {/* Local Video Container (Picture in Picture) */}
+                    <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 w-28 md:w-64 aspect-[3/4] md:aspect-video rounded-xl overflow-hidden bg-black border border-white/20 shadow-2xl z-40 group/local hover:scale-105 transition-transform">
                       <video 
                         ref={localVideoRef} 
                         autoPlay 
@@ -375,44 +375,42 @@ export default function ChatRoom() {
                         playsInline 
                         className="w-full h-full object-cover mirror opacity-90"
                       />
-                      <span className="absolute top-4 left-4 z-20 px-3 py-1 bg-black/60 backdrop-blur-md rounded-md text-[12px] font-semibold border border-white/5">You</span>
+                      <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 backdrop-blur-md rounded text-[10px] font-semibold border border-white/5 text-white">You</span>
                       
                       {!localStream && (
                          <div className="absolute inset-0 flex flex-col items-center justify-center text-text-secondary bg-surface-bright">
-                            <div className="w-12 h-12 rounded-full bg-border flex items-center justify-center mb-3">
-                              <VideoOff className="w-6 h-6" />
-                            </div>
-                            <span className="text-[11px] font-bold uppercase tracking-widest opacity-40">Camera Inactive</span>
+                            <VideoOff className="w-5 h-5 mb-2" />
+                            <span className="text-[9px] font-bold uppercase tracking-widest opacity-40">Inactive</span>
                          </div>
                       )}
+                    </div>
                       
-                      {/* Local Controls Overlay */}
-                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0 duration-300">
-                        <button 
-                          onClick={toggleMic}
-                          className={cn(
-                            "p-3.5 rounded-xl transition-all shadow-xl",
-                            isMicOn ? "bg-surface/80 backdrop-blur-md hover:bg-surface-bright" : "bg-danger text-white scale-110"
-                          )}
-                        >
-                          {isMicOn ? <Mic className="w-4.5 h-4.5" /> : <MicOff className="w-4.5 h-4.5" />}
-                        </button>
-                        <button 
-                          onClick={toggleVideo}
-                          className={cn(
-                            "p-3.5 rounded-xl transition-all shadow-xl",
-                            isVideoOn ? "bg-surface/80 backdrop-blur-md hover:bg-surface-bright" : "bg-danger text-white scale-110"
-                          )}
-                        >
-                          {isVideoOn ? <VideoIcon className="w-4.5 h-4.5" /> : <VideoOff className="w-4.5 h-4.5" />}
-                        </button>
-                        <button 
-                          onClick={() => setIsBlurred(!isBlurred)}
-                          className="p-3.5 rounded-xl bg-surface/80 backdrop-blur-md hover:bg-surface-bright transition-all shadow-xl"
-                        >
-                          {isBlurred ? <EyeOff className="w-4.5 h-4.5" /> : <Eye className="w-4.5 h-4.5" />}
-                        </button>
-                      </div>
+                    {/* Local Controls Overlay */}
+                    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 md:gap-3 z-40 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all transform translate-y-0 md:translate-y-2 md:group-hover:translate-y-0 duration-300">
+                      <button 
+                        onClick={toggleMic}
+                        className={cn(
+                          "p-3 md:p-3.5 rounded-xl transition-all shadow-xl text-white",
+                          isMicOn ? "bg-surface/80 backdrop-blur-md hover:bg-surface-bright" : "bg-danger scale-110"
+                        )}
+                      >
+                        {isMicOn ? <Mic className="w-4 h-4 md:w-4.5 md:h-4.5" /> : <MicOff className="w-4 h-4 md:w-4.5 md:h-4.5" />}
+                      </button>
+                      <button 
+                        onClick={toggleVideo}
+                        className={cn(
+                          "p-3 md:p-3.5 rounded-xl transition-all shadow-xl text-white",
+                          isVideoOn ? "bg-surface/80 backdrop-blur-md hover:bg-surface-bright" : "bg-danger scale-110"
+                        )}
+                      >
+                        {isVideoOn ? <VideoIcon className="w-4 h-4 md:w-4.5 md:h-4.5" /> : <VideoOff className="w-4 h-4 md:w-4.5 md:h-4.5" />}
+                      </button>
+                      <button 
+                        onClick={() => setIsBlurred(!isBlurred)}
+                        className="p-3 md:p-3.5 rounded-xl bg-surface/80 backdrop-blur-md hover:bg-surface-bright text-white transition-all shadow-xl"
+                      >
+                        {isBlurred ? <EyeOff className="w-4 h-4 md:w-4.5 md:h-4.5" /> : <Eye className="w-4 h-4 md:w-4.5 md:h-4.5" />}
+                      </button>
                     </div>
                   </>
                 ) : (
@@ -459,7 +457,7 @@ export default function ChatRoom() {
         </main>
 
         {/* Chat Sidebar */}
-        <aside className="w-[380px] flex flex-col bg-surface border-l border-border shrink-0">
+        <aside className="w-full lg:w-[380px] h-[45vh] lg:h-auto flex flex-col bg-surface border-t lg:border-t-0 lg:border-l border-border shrink-0">
           <div className="p-4 h-16 flex items-center justify-between border-b border-border">
             <div>
               <p className="font-bold text-sm">Chat Session</p>
