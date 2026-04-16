@@ -1,6 +1,6 @@
 # SafeConnect
 
-> 🟢 **LIVE DEMO**: [Click here to join the live session!](https://vid-seasons-regulated-trademark.trycloudflare.com/)
+> 🟢 **LIVE DEMO**: [safeconnect-ccpu.vercel.app](https://safeconnect-ccpu.vercel.app/)
 > ⚠️ **Note**: This project is in active development. The platform may currently experience minor bugs or instability.
 
 A modern, production-ready anonymous chat platform inspired by Omegle, but designed with a focus on safety, AI moderation, and user privacy.
@@ -16,8 +16,8 @@ A modern, production-ready anonymous chat platform inspired by Omegle, but desig
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React 19, Tailwind CSS 4, motion, Zustand, Socket.io-client.
-- **Backend**: Node.js, Express, Socket.io (Matchmaking & Signaling).
+- **Frontend**: React 19, Tailwind CSS 4, motion, Zustand, Socket.io-client. (Hosted on **Vercel**)
+- **Backend**: Node.js, Express, Socket.io (Matchmaking & Signaling). (Hosted on **Render**)
 - **AI**: Google Gemini API (@google/genai).
 - **Communication**: WebRTC (P2P) + WebSockets.
 
