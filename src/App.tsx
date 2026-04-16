@@ -12,7 +12,7 @@ export default function App() {
   const { is18Plus, status } = useStore();
 
   return (
-    <div className="h-screen w-screen overflow-hidden selection:bg-accent selection:text-bg">
+    <div className="w-full min-h-screen selection:bg-accent selection:text-bg">
       <AnimatePresence mode="wait">
         {!is18Plus ? (
           <motion.div
