@@ -30,7 +30,7 @@ export default function LandingPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-bg overflow-x-hidden relative">
+    <div className="flex flex-col items-center min-h-screen p-4 md:p-6 pt-12 md:pt-20 bg-bg overflow-x-hidden relative">
       {/* Background Orbs */}
       <div className="absolute top-1/4 -left-20 w-80 h-80 bg-accent/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
@@ -70,7 +70,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: -20, scale: 0.98 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.98 }}
-              className="bg-surface border border-border rounded-3xl p-10 space-y-8 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
+              className="bg-surface border border-border rounded-3xl p-6 md:p-10 space-y-8 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
             >
               <div className="space-y-6">
                 <h3 className="text-2xl font-bold tracking-tight">Community Safety</h3>
@@ -115,7 +115,7 @@ export default function LandingPage() {
               initial={{ opacity: 0, x: -20, scale: 0.98 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 20, scale: 0.98 }}
-              className="bg-surface border border-border rounded-3xl p-10 space-y-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
+              className="bg-surface border border-border rounded-3xl p-6 md:p-10 space-y-10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]"
             >
               <div className="space-y-6">
                 <div className="text-center">
@@ -171,7 +171,7 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5">
                 <button
                   onClick={() => handleStart('text')}
                   className="flex flex-col items-center justify-center p-8 rounded-3xl bg-surface-bright/50 border border-border hover:border-accent hover:bg-accent/5 transition-all group scale-100 hover:scale-[1.02] active:scale-98"
