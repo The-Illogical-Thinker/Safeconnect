@@ -51,6 +51,8 @@ export default function ChatRoom() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isMediaReady = useRef<boolean>(false);
+  const signalQueue = useRef<any[]>([]);
 
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -97,24 +99,7 @@ export default function ChatRoom() {
       }
     });
 
-    s.on('signal', async ({ signal }) => {
-      if (peerRef.current) {
-        try {
-          if (signal.type === 'offer') {
-            await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal));
-            const answer = await peerRef.current.createAnswer();
-            await peerRef.current.setLocalDescription(answer);
-            s.emit('signal', { roomId, signal: answer });
-          } else if (signal.type === 'answer') {
-            await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal));
-          } else if (signal.candidate) {
-            await peerRef.current.addIceCandidate(new RTCIceCandidate(signal));
-          }
-        } catch (err) {
-          console.error('Signaling error:', err);
-        }
-      }
-    });
+    // Signaling is now handled dynamically inside startWebRTC to capture the correct rId closure
 
     s.on('receive-message', (msg) => {
       addMessage(msg);
@@ -144,14 +129,9 @@ export default function ChatRoom() {
       const activeSocket = s || socket;
       if (!activeSocket) return;
 
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: true, 
-        audio: true 
-      });
-      setLocalStream(stream);
-      if (localVideoRef.current) {
-        localVideoRef.current.srcObject = stream;
-      }
+      isMediaReady.current = false;
+      signalQueue.current = [];
+      activeSocket.off('signal'); // Clear old listeners
 
       const pc = new RTCPeerConnection({
         iceServers: [
@@ -161,8 +141,6 @@ export default function ChatRoom() {
       });
 
       peerRef.current = pc;
-
-      stream.getTracks().forEach(track => pc.addTrack(track, stream));
 
       pc.ontrack = (event) => {
         setRemoteStream(event.streams[0]);
@@ -176,6 +154,51 @@ export default function ChatRoom() {
           activeSocket.emit('signal', { roomId: rId, signal: event.candidate });
         }
       };
+
+      // Define signal processor
+      const processSignal = async (signal: any) => {
+        try {
+          if (signal.type === 'offer') {
+            await pc.setRemoteDescription(new RTCSessionDescription(signal));
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            activeSocket.emit('signal', { roomId: rId, signal: answer });
+          } else if (signal.type === 'answer') {
+            await pc.setRemoteDescription(new RTCSessionDescription(signal));
+          } else if (signal.candidate) {
+            await pc.addIceCandidate(new RTCIceCandidate(signal));
+          }
+        } catch (err) {
+          console.error('Signaling error in processSignal:', err);
+        }
+      };
+
+      activeSocket.on('signal', async ({ signal }) => {
+        if (!isMediaReady.current) {
+          signalQueue.current.push(signal);
+        } else {
+          await processSignal(signal);
+        }
+      });
+
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: true, 
+        audio: true 
+      });
+      setLocalStream(stream);
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+      }
+
+      stream.getTracks().forEach(track => pc.addTrack(track, stream));
+
+      isMediaReady.current = true;
+
+      // Process backlog
+      for (const queued of signalQueue.current) {
+        await processSignal(queued);
+      }
+      signalQueue.current = [];
 
       if (initiator) {
         const offer = await pc.createOffer();
