@@ -1,0 +1,13 @@
+{
+  "name": "SafeConnect",
+  "description": "A modern, AI-moderated anonymous video and text chat platform focusing on user safety and real-time connectivity.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "Real-time Chat",
+    "Video Streaming",
+    "AI Content Moderation"
+  ]
+}
