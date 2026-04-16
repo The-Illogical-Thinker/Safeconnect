@@ -20,14 +20,7 @@ A modern, production-ready anonymous chat platform inspired by Omegle, but desig
 - **Backend**: Node.js, Express, Socket.io (Matchmaking & Signaling). (Hosted on **Render**)
 - **Communication**: WebRTC (P2P) + WebSockets.
 
-## 🚀 Setup & Deployment
-
-### Environment Variables
-The following must be configured in your environment:
-- `GEMINI_API_KEY`: Your Google Gemini API Key.
-
-
-## 🔒 Privacy & Moderation
+## Privacy & Moderation
 - We do not store chat logs.
 - Matching is handled in memory on the server.
 - Moderation relies on cutting-edge LLMs to determine safe/unsafe content locally before transmission.
